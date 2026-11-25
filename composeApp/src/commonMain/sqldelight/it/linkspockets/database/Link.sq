@@ -1,0 +1,17 @@
+CREATE TABLE link (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL CHECK (length(trim(nome)) > 0),
+    url TEXT NOT NULL CHECK (length(trim(url)) > 0),
+    canale TEXT NOT NULL CHECK (length(trim(canale)) > 0),
+    categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0)
+);
+
+selectAll:
+SELECT * FROM link ORDER BY id DESC;
+
+insertLink:
+INSERT INTO link(nome, url, canale, categoria)
+VALUES (?, ?, ?, ?);
+
+deleteById:
+DELETE FROM link WHERE id = ?;
