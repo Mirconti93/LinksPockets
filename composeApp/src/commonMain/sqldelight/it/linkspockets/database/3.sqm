@@ -1,0 +1,23 @@
+ALTER TABLE link RENAME TO link_old;
+
+CREATE TABLE link (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL CHECK (length(trim(nome)) > 0),
+    url TEXT NOT NULL CHECK (length(trim(url)) > 0),
+    canale TEXT NOT NULL
+);
+
+INSERT INTO link(id, nome, url, canale)
+SELECT id, nome, url, canale FROM link_old;
+
+CREATE TABLE link_categoria (
+    link_id INTEGER NOT NULL REFERENCES link(id) ON DELETE CASCADE,
+    categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0),
+    ordine INTEGER NOT NULL,
+    PRIMARY KEY (link_id, categoria)
+);
+
+INSERT INTO link_categoria(link_id, categoria, ordine)
+SELECT id, categoria, 0 FROM link_old;
+
+DROP TABLE link_old;
