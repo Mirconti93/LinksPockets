@@ -7,7 +7,7 @@ Il modulo iOS espone una schermata UIKit vuota, senza ancora un'app host Xcode.
 ## Funzionalità
 
 - Lista dei link, dal più recente al meno recente.
-- Inserimento link con nome, URL e categoria obbligatori; canale facoltativo,
+- Inserimento link con nome, URL e almeno una categoria obbligatori; canale facoltativo,
   selezionabile da un menu a tendina dei canali salvati (oppure **Nessun canale**).
 - Creazione di un canale dal form link con **+ Nuovo canale**, senza perdere gli
   input del link, e selezione automatica del canale appena salvato.
@@ -116,10 +116,24 @@ usano un test double di SharedPreferences; non richiedono un dispositivo Android
 
 ## Database
 
-La tabella `link` contiene `nome`, `url`, `canale`, `categoria` (TEXT NOT NULL)
-più `id` (INTEGER PRIMARY KEY AUTOINCREMENT). Schema e query:
+La tabella `link` contiene `nome`, `url`, `canale` (TEXT NOT NULL)
+più `id` (INTEGER PRIMARY KEY AUTOINCREMENT). Le categorie multiple sono salvate
+in `link_categoria`: `link_id` (foreign key al link), `categoria` (testo non vuoto)
+e `ordine`. La chiave primaria composta `(link_id, categoria)` impedisce duplicati
+per link; la stessa categoria può essere associata a link diversi. Schema e query:
 
 `composeApp/src/commonMain/sqldelight/it/linkspockets/database/Link.sq`.
+
+La migrazione `3.sqm` porta lo schema alla versione 4, conservando ID, nome,
+URL, canale e categoria di ogni link esistente come prima associazione, senza
+toccare i canali. Inserimento del link e delle categorie ed eliminazione delle
+relative associazioni avvengono in transazione (cleanup esplicito anche con
+foreign key SQLite disabilitate). Il dominio usa `categorie: List<String>`;
+`AddLinkUseCase` elimina spazi esterni, voci vuote e duplicati (case-sensitive),
+mantenendo l'ordine di inserimento. È richiesta almeno una categoria non vuota.
+Nel form Android le categorie si inseriscono separate da virgole; gli input
+restano invariati in caso di errore per consentire il retry. Le categorie dei
+canali restano singole e facoltative.
 
 La tabella `canale`, definita in `Canale.sq` nella stessa directory, contiene:
 

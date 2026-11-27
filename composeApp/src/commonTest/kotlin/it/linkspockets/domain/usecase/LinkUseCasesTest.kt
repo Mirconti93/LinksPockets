@@ -20,18 +20,18 @@ class LinkUseCasesTest {
 
     @Test
     fun addNormalizesFieldsBeforeCallingRepository() = runTest {
-        addLink(LinkDraft(" Kotlin ", " https://kotlinlang.org ", " Web ", " Dev "))
+        addLink(LinkDraft(" Kotlin ", " https://kotlinlang.org ", " Web ", listOf(" Dev ", "UI", "Dev", " ")))
         assertEquals(
-            listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", "Dev")),
+            listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", listOf("Dev", "UI"))),
             repository.addedDrafts,
         )
     }
 
     @Test
     fun addAcceptsAndNormalizesBlankChannel() = runTest {
-        addLink(LinkDraft("Kotlin", "https://kotlinlang.org", "   ", "Dev"))
+        addLink(LinkDraft("Kotlin", "https://kotlinlang.org", "   ", listOf("Dev")))
         assertEquals(
-            listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "", "Dev")),
+            listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "", listOf("Dev"))),
             repository.addedDrafts,
         )
     }
@@ -48,7 +48,7 @@ class LinkUseCasesTest {
         val observeLinks = ObserveLinksUseCase(repository)
         val flow = observeLinks()
         assertTrue(flow.first().isEmpty())
-        val links = listOf(LinkEntry(1, "Kotlin", "https://kotlinlang.org", "Web", "Dev"))
+        val links = listOf(LinkEntry(1, "Kotlin", "https://kotlinlang.org", "Web", listOf("Dev")))
         repository.links.value = links
         assertEquals(links, flow.first())
     }

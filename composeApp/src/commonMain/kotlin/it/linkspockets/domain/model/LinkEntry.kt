@@ -5,5 +5,5 @@ data class LinkEntry(
     val nome: String,
     val url: String,
     val canale: String,
-    val categoria: String,
+    val categorie: List<String>,
 )

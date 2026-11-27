@@ -10,7 +10,11 @@ import kotlinx.coroutines.flow.map
 
 class LinkRepositoryImpl(private val localDataSource: LinkLocalDataSource) : LinkRepository {
     override fun observeLinks(): Flow<List<LinkEntry>> =
-        localDataSource.observeLinks().map { links -> links.map { it.toDomain() } }
+        localDataSource.observeLinks().map { rows ->
+            rows.groupBy { it.id }.values.map { linkRows ->
+                linkRows.first().toDomain(linkRows.mapNotNull { it.categoria })
+            }
+        }
 
     override suspend fun add(draft: LinkDraft) = localDataSource.insert(draft)
 

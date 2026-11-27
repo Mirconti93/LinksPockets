@@ -18,6 +18,7 @@ data class LinkState(
 
 data class LinkFormState(
     val draft: LinkDraft = LinkDraft(),
+    val categoriesInput: String = "",
     val isSaving: Boolean = false,
     val error: String? = null,
 )

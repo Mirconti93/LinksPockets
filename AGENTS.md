@@ -7,7 +7,9 @@ Queste istruzioni si applicano all'intero repository.
 ## Contesto del progetto
 
 LinksPockets salva una lista di link in SQLite locale, senza backend o account.
-Ogni link contiene `nome`, `url`, `canale` e `categoria`, oltre a un `id` automatico.
+Ogni link contiene `nome`, `url`, `canale` e una lista `categorie`, oltre a un `id`
+automatico. Le categorie sono associate tramite `link_categoria` (schema v4);
+la categoria dei canali resta singola e facoltativa.
 La UI funzionale è Android; il modulo iOS espone per ora una schermata UIKit vuota.
 
 Leggi i file rilevanti prima di modificarli. Verifica sempre la configurazione corrente:

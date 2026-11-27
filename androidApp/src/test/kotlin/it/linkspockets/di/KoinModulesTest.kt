@@ -114,7 +114,7 @@ class KoinModulesTest {
             viewModel.dispatch(LinkIntent.CategoryChanged(" Dev "))
             viewModel.dispatch(LinkIntent.SaveLink)
             runCurrent()
-            assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", "Dev")), repository.added)
+            assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", listOf("Dev"))), repository.added)
             assertNull(viewModel.state.value.form)
             assertEquals("Kotlin", viewModel.state.value.links.single().nome)
         } finally {
@@ -265,7 +265,7 @@ class KoinModulesTest {
         override fun observeLinks(): Flow<List<LinkEntry>> = links
         override suspend fun add(draft: LinkDraft) {
             added += draft
-            links.value = listOf(LinkEntry(1, draft.nome, draft.url, draft.canale, draft.categoria))
+            links.value = listOf(LinkEntry(1, draft.nome, draft.url, draft.canale, draft.categorie))
         }
         override suspend fun delete(id: Long) {
             links.value = links.value.filterNot { it.id == id }

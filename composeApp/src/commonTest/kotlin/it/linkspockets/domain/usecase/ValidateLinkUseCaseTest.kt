@@ -8,7 +8,7 @@ import kotlin.test.assertNull
 
 class ValidateLinkUseCaseTest {
     private val validateLink = ValidateLinkUseCase()
-    private val valid = LinkDraft("Kotlin", "https://kotlinlang.org", "Web", "Sviluppo")
+    private val valid = LinkDraft("Kotlin", "https://kotlinlang.org", "Web", listOf("Sviluppo"))
 
     @Test
     fun acceptsHttpAndHttps() {
@@ -20,7 +20,14 @@ class ValidateLinkUseCaseTest {
     @Test
     fun rejectsMissingRequiredFields() {
         assertEquals(LinkValidationError.EMPTY_NAME, validateLink(valid.copy(nome = " ")))
-        assertEquals(LinkValidationError.EMPTY_CATEGORY, validateLink(valid.copy(categoria = " ")))
+        assertEquals(LinkValidationError.EMPTY_CATEGORY, validateLink(valid.copy(categorie = listOf(" "))))
+    }
+
+    @Test
+    fun validatesMultipleCategories() {
+        assertNull(validateLink(valid.copy(categorie = listOf("Dev", "UI"))))
+        assertNull(validateLink(valid.copy(categorie = listOf("", "Dev", " "))))
+        assertEquals(LinkValidationError.EMPTY_CATEGORY, validateLink(valid.copy(categorie = emptyList())))
     }
 
     @Test

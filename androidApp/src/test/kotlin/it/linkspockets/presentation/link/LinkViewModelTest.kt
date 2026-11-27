@@ -42,7 +42,7 @@ class LinkViewModelTest {
     private val store = ViewModelStore()
     private val repository = FakeLinkRepository()
     private val channelRepository = FakeChannelRepository()
-    private val link = LinkEntry(1, "Kotlin", "https://kotlinlang.org", "Web", "Dev")
+    private val link = LinkEntry(1, "Kotlin", "https://kotlinlang.org", "Web", listOf("Dev"))
 
     @BeforeTest
     fun setUp() {
@@ -112,7 +112,7 @@ class LinkViewModelTest {
         repository.addGate!!.complete(Unit)
         runCurrent()
         assertNull(viewModel.state.value.form)
-        assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", "Dev")), repository.added)
+        assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "Web", listOf("Dev"))), repository.added)
         assertEquals("Kotlin", viewModel.state.value.links.single().nome)
     }
 
@@ -127,8 +127,24 @@ class LinkViewModelTest {
         runCurrent()
 
         assertNull(viewModel.state.value.form)
-        assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "", "Dev")), repository.added)
+        assertEquals(listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "", listOf("Dev"))), repository.added)
         assertEquals("", viewModel.state.value.links.single().canale)
+    }
+
+    @Test
+    fun savesMultipleCategoriesAndPreservesRawInputOnFailure() = runTest(dispatcher) {
+        val viewModel = createViewModel()
+        fillForm(viewModel)
+        val input = " Dev, UI, Dev, , "
+        viewModel.onIntent(LinkIntent.CategoryChanged(input))
+        assertEquals(input, viewModel.state.value.form?.categoriesInput)
+        repository.failAdd = true
+        viewModel.onIntent(LinkIntent.SaveLink)
+        assertEquals(input, viewModel.state.value.form?.categoriesInput)
+        repository.failAdd = false
+        viewModel.onIntent(LinkIntent.SaveLink)
+        assertEquals(listOf("Dev", "UI"), repository.added.single().categorie)
+        assertEquals(listOf("Dev", "UI"), viewModel.state.value.links.single().categorie)
     }
 
     @Test
@@ -334,7 +350,7 @@ class LinkViewModelTest {
             addGate?.await()
             if (failAdd) error("Insert failed")
             added += draft
-            links.value = listOf(LinkEntry(addCalls.toLong(), draft.nome, draft.url, draft.canale, draft.categoria)) + links.value
+            links.value = listOf(LinkEntry(addCalls.toLong(), draft.nome, draft.url, draft.canale, draft.categorie)) + links.value
         }
 
         override suspend fun delete(id: Long) {

@@ -2,16 +2,33 @@ CREATE TABLE link (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL CHECK (length(trim(nome)) > 0),
     url TEXT NOT NULL CHECK (length(trim(url)) > 0),
-    canale TEXT NOT NULL,
-    categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0)
+    canale TEXT NOT NULL
+);
+
+CREATE TABLE link_categoria (
+    link_id INTEGER NOT NULL REFERENCES link(id) ON DELETE CASCADE,
+    categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0),
+    ordine INTEGER NOT NULL,
+    PRIMARY KEY (link_id, categoria)
 );
 
 selectAll:
-SELECT * FROM link ORDER BY id DESC;
+SELECT link.*, link_categoria.categoria
+FROM link LEFT JOIN link_categoria ON link.id = link_categoria.link_id
+ORDER BY link.id DESC, link_categoria.ordine;
+
+lastInsertedId:
+SELECT last_insert_rowid();
+
+insertCategory:
+INSERT INTO link_categoria(link_id, categoria, ordine) VALUES (?, ?, ?);
+
+deleteCategories:
+DELETE FROM link_categoria WHERE link_id = ?;
 
 insertLink:
-INSERT INTO link(nome, url, canale, categoria)
-VALUES (?, ?, ?, ?);
+INSERT INTO link(nome, url, canale)
+VALUES (?, ?, ?);
 
 deleteById:
 DELETE FROM link WHERE id = ?;

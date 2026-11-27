@@ -7,7 +7,7 @@ class ValidateLinkUseCase {
     operator fun invoke(draft: LinkDraft): LinkValidationError? = when {
         draft.nome.isBlank() -> LinkValidationError.EMPTY_NAME
         !HTTP_URL.matches(draft.url.trim()) -> LinkValidationError.INVALID_URL
-        draft.categoria.isBlank() -> LinkValidationError.EMPTY_CATEGORY
+        draft.categorie.none { it.isNotBlank() } -> LinkValidationError.EMPTY_CATEGORY
         else -> null
     }
 

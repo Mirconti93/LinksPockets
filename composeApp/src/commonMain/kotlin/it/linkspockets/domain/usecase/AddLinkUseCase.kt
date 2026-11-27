@@ -15,7 +15,7 @@ class AddLinkUseCase(
                 nome = draft.nome.trim(),
                 url = draft.url.trim(),
                 canale = draft.canale.trim(),
-                categoria = draft.categoria.trim(),
+                categorie = draft.categorie.map { it.trim() }.filter { it.isNotEmpty() }.distinct(),
             ),
         )
     }

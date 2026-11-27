@@ -91,7 +91,7 @@ fun LinkScreen(
                             if (link.canale.isNotBlank()) {
                                 Text("Canale: ${link.canale}")
                             }
-                            Text("Categoria: ${link.categoria}")
+                            Text("Categorie: ${link.categorie.joinToString()}")
                             Row {
                                 TextButton(onClick = { onIntent(LinkIntent.OpenLink(link)) }) { Text("Apri") }
                                 TextButton(onClick = { onIntent(LinkIntent.RequestDeletion(link)) }) { Text("Elimina") }
@@ -146,8 +146,8 @@ private fun AddLinkDialog(state: LinkState, onIntent: (LinkIntent) -> Unit, onAd
                 )
                 ChannelSelector(state, onIntent, onAddChannel)
                 OutlinedTextField(
-                    form.draft.categoria, { onIntent(LinkIntent.CategoryChanged(it)) },
-                    label = { Text("Categoria") }, singleLine = true, enabled = !form.isSaving,
+                    form.categoriesInput, { onIntent(LinkIntent.CategoryChanged(it)) },
+                    label = { Text("Categorie (separate da virgole)") }, singleLine = true, enabled = !form.isSaving,
                 )
                 form.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             }

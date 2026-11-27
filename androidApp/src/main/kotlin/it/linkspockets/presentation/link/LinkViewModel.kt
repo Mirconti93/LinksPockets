@@ -43,7 +43,15 @@ class LinkViewModel(
             is LinkIntent.NameChanged -> updateDraft { copy(nome = intent.value) }
             is LinkIntent.UrlChanged -> updateDraft { copy(url = intent.value) }
             is LinkIntent.ChannelChanged -> updateDraft { copy(canale = intent.value) }
-            is LinkIntent.CategoryChanged -> updateDraft { copy(categoria = intent.value) }
+            is LinkIntent.CategoryChanged -> updateState { current ->
+                val form = current.form
+                if (form == null || form.isSaving) current
+                else current.copy(form = form.copy(
+                    categoriesInput = intent.value,
+                    draft = form.draft.copy(categorie = intent.value.split(',')),
+                    error = null,
+                ))
+            }
             LinkIntent.SaveLink -> saveLink()
             is LinkIntent.RequestDeletion -> updateState {
                 if (it.form != null || it.pendingDeletion != null) it
