@@ -1,0 +1,23 @@
+CREATE TABLE canale (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE CHECK (length(trim(nome)) > 0),
+    url TEXT NOT NULL CHECK (length(trim(url)) > 0),
+    categoria TEXT
+);
+
+selectAll:
+SELECT * FROM canale ORDER BY nome;
+
+insertCanale:
+INSERT INTO canale(nome, url, categoria)
+VALUES (?, ?, ?);
+
+deleteById:
+DELETE FROM canale WHERE id = ?;
+
+insertIfAbsent:
+INSERT OR IGNORE INTO canale(nome, url, categoria)
+VALUES (?, ?, ?);
+
+insertedRowCount:
+SELECT changes();

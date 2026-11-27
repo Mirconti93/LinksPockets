@@ -1,0 +1,6 @@
+CREATE TABLE canale (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE CHECK (length(trim(nome)) > 0),
+    url TEXT NOT NULL CHECK (length(trim(url)) > 0),
+    categoria TEXT
+);

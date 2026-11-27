@@ -1,0 +1,14 @@
+CREATE TABLE link_new (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL CHECK (length(trim(nome)) > 0),
+    url TEXT NOT NULL CHECK (length(trim(url)) > 0),
+    canale TEXT NOT NULL,
+    categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0)
+);
+
+INSERT INTO link_new(id, nome, url, canale, categoria)
+SELECT id, nome, url, canale, categoria FROM link;
+
+DROP TABLE link;
+
+ALTER TABLE link_new RENAME TO link;
