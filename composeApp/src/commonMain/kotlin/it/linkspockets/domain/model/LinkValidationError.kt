@@ -3,7 +3,6 @@ package it.linkspockets.domain.model
 enum class LinkValidationError {
     EMPTY_NAME,
     INVALID_URL,
-    EMPTY_CHANNEL,
     EMPTY_CATEGORY,
 }
 

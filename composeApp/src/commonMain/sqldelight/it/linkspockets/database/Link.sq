@@ -2,7 +2,7 @@ CREATE TABLE link (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL CHECK (length(trim(nome)) > 0),
     url TEXT NOT NULL CHECK (length(trim(url)) > 0),
-    canale TEXT NOT NULL CHECK (length(trim(canale)) > 0),
+    canale TEXT NOT NULL,
     categoria TEXT NOT NULL CHECK (length(trim(categoria)) > 0)
 );
 

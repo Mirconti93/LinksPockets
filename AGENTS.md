@@ -8,7 +8,7 @@ Queste istruzioni si applicano all'intero repository.
 
 LinksPockets salva una lista di link in SQLite locale, senza backend o account.
 Ogni link contiene `nome`, `url`, `canale` e `categoria`, oltre a un `id` automatico.
-La UI è attualmente solo Android; la libreria condivisa mantiene i target iOS per uso futuro.
+La UI funzionale è Android; il modulo iOS espone per ora una schermata UIKit vuota.
 
 Leggi i file rilevanti prima di modificarli. Verifica sempre la configurazione corrente:
 `settings.gradle.kts`, i build script dei moduli e `gradle/libs.versions.toml`
@@ -22,14 +22,20 @@ sono la fonte di verità per percorsi, dipendenze e versioni.
   - Schema SQLDelight: `composeApp/src/commonMain/sqldelight/it/linkspockets/database/Link.sq`.
   - Test domain: `composeApp/src/commonTest/kotlin/`.
   - Test SQLite: `composeApp/src/jvmTest/kotlin/`.
-- `:androidMain`: modulo applicazione Android indipendente.
-  - Directory Gradle: `composeApp/src/androidMain/`.
-  - Sorgenti: `composeApp/src/androidMain/src/main/kotlin/it/linkspockets/`.
+- `:androidApp`: modulo applicazione Android indipendente.
+  - Directory Gradle: `androidApp/`.
+  - Sorgenti: `androidApp/src/main/kotlin/it/linkspockets/`.
   - Contiene `presentation`, wiring Koin Android, Application e Activity.
-  - Test locali JVM: `composeApp/src/androidMain/src/test/kotlin/`.
+  - Test locali JVM: `androidApp/src/test/kotlin/`.
+- `:iosApp`: modulo Kotlin Multiplatform per iOS, nella directory `iosApp/`.
+  - Sorgenti: `iosApp/src/iosMain/kotlin/it/linkspockets/`.
+  - Contiene `IosModule.kt` e la schermata UIKit vuota `MainViewController()`.
+  - Produce il framework statico `LinksPockets` per device e simulatore ARM64.
+  - Non include un progetto Xcode host né un bundle `.app` eseguibile.
 
-Non confondere il modulo `:androidMain` con il source set Android di una libreria KMP.
-La dipendenza tra moduli è `:androidMain → :composeApp`, mai il contrario.
+I tre moduli sono nella root; `iosMain` resta il source set standard dentro `iosApp`.
+Le dipendenze sono `:androidApp → :composeApp ← :iosApp`, mai il contrario.
+La libreria condivisa mantiene i target iOS, ma il framework è prodotto da `:iosApp`.
 
 ## Clean Architecture e Kotlin
 
@@ -93,13 +99,15 @@ Comandi disponibili:
 
 ```bash
 # Build dell'app Android:
-./gradlew :androidMain:assembleDebug
+./gradlew :androidApp:assembleDebug
 # Test mirati del ViewModel MVI:
-./gradlew :androidMain:testDebugUnitTest --tests 'it.linkspockets.presentation.link.LinkViewModelTest'
+./gradlew :androidApp:testDebugUnitTest --tests 'it.linkspockets.presentation.link.LinkViewModelTest'
 # Test del wiring Koin Android:
-./gradlew :androidMain:testDebugUnitTest --tests 'it.linkspockets.di.KoinModulesTest'
+./gradlew :androidApp:testDebugUnitTest --tests 'it.linkspockets.di.KoinModulesTest'
 # Test domain e SQLite della libreria condivisa:
 ./gradlew :composeApp:jvmTest
+# Framework iOS (richiede Xcode completo, non solo Command Line Tools):
+./gradlew :iosApp:linkDebugFrameworkIosSimulatorArm64
 # Controllo whitespace sulle modifiche tracciate:
 git diff --check
 ```

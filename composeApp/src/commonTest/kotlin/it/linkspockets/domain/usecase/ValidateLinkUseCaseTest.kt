@@ -20,8 +20,13 @@ class ValidateLinkUseCaseTest {
     @Test
     fun rejectsMissingRequiredFields() {
         assertEquals(LinkValidationError.EMPTY_NAME, validateLink(valid.copy(nome = " ")))
-        assertEquals(LinkValidationError.EMPTY_CHANNEL, validateLink(valid.copy(canale = "")))
         assertEquals(LinkValidationError.EMPTY_CATEGORY, validateLink(valid.copy(categoria = " ")))
+    }
+
+    @Test
+    fun acceptsMissingChannel() {
+        assertNull(validateLink(valid.copy(canale = "")))
+        assertNull(validateLink(valid.copy(canale = "   ")))
     }
 
     @Test

@@ -14,5 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LinksPockets"
-include(":composeApp", ":androidMain")
-project(":androidMain").projectDir = file("composeApp/src/androidMain")
+include(":composeApp", ":androidApp", ":iosApp")

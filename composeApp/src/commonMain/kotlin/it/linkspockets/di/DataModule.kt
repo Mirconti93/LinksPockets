@@ -1,5 +1,9 @@
 package it.linkspockets.di
 
+import it.linkspockets.data.datasource.ChannelLocalDataSource
+import it.linkspockets.data.datasource.SqlDelightChannelLocalDataSource
+import it.linkspockets.data.repository.ChannelRepositoryImpl
+import it.linkspockets.domain.repository.ChannelRepository
 import it.linkspockets.data.datasource.LinkLocalDataSource
 import it.linkspockets.data.datasource.SqlDelightLinkLocalDataSource
 import it.linkspockets.data.repository.LinkRepositoryImpl
@@ -19,4 +23,8 @@ val dataModule = module {
         SqlDelightLinkLocalDataSource(get(), get(databaseDispatcherQualifier))
     }
     single<LinkRepository> { LinkRepositoryImpl(get()) }
+    single<ChannelLocalDataSource> {
+        SqlDelightChannelLocalDataSource(get(), get(databaseDispatcherQualifier))
+    }
+    single<ChannelRepository> { ChannelRepositoryImpl(get()) }
 }

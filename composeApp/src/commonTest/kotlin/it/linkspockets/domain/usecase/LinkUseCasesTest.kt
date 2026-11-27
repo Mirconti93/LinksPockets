@@ -28,6 +28,15 @@ class LinkUseCasesTest {
     }
 
     @Test
+    fun addAcceptsAndNormalizesBlankChannel() = runTest {
+        addLink(LinkDraft("Kotlin", "https://kotlinlang.org", "   ", "Dev"))
+        assertEquals(
+            listOf(LinkDraft("Kotlin", "https://kotlinlang.org", "", "Dev")),
+            repository.addedDrafts,
+        )
+    }
+
+    @Test
     fun invalidDraftDoesNotReachRepository() = runTest {
         val failure = assertFailsWith<InvalidLinkException> { addLink(LinkDraft()) }
         assertEquals(LinkValidationError.EMPTY_NAME, failure.error)
